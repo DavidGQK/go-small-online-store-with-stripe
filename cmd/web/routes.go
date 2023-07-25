@@ -5,8 +5,10 @@ import (
 	"net/http"
 )
 
-func (a *application) routes() http.Handler {
+func (app *application) routes() http.Handler {
 	mux := chi.NewRouter()
+
+	mux.Get("/virtual-terminal", app.VirtualTerminal)
 
 	return mux
 }
