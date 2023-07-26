@@ -54,11 +54,12 @@ func main() {
 
 	flag.IntVar(&cfg.port, "port", 4000, "server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production}")
-	flag.StringVar(&cfg.api, "api", "https://http://localhost:4001/", "URL to api")
+	flag.StringVar(&cfg.api, "api", "http://localhost:4001/", "URL to api")
 
 	flag.Parse()
 
 	cfg.stripe.key = os.Getenv("STRIPE_KEY")
+	fmt.Println("KEY in main", cfg.stripe.key)
 	cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)

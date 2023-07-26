@@ -54,6 +54,7 @@ func main() {
 	flag.Parse()
 
 	cfg.stripe.key = os.Getenv("STRIPE_KEY")
+	fmt.Println("KEY in api", cfg.stripe.key)
 	cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
