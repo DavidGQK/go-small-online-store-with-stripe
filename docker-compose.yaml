@@ -1,0 +1,36 @@
+version: '3'
+services:
+  mariadb_database:
+    container_name: mariadb_database
+    image: mariadb:10.6.1
+    restart: always
+    ports:
+      - "5432:3306"
+    expose:
+      - "5432"
+    volumes:
+      - /mariadb_golang/data:/var/lib/mysqldata
+    env_file:
+      - .env
+    networks:
+      - golang_project_network
+
+#  mailhog:
+#    image: mailhog/mailhog
+#    restart: always
+#    logging:
+#      driver: 'none'  # disable saving logs
+#    ports:
+#      - "1025:1025" # smtp server
+#      - "8025:8025" # web ui
+
+
+#volumes:
+#  static_volume:
+#  redis_data:
+#  elasticsearch-data:
+#    driver: local
+
+networks:
+  golang_project_network:
+      driver: bridge
