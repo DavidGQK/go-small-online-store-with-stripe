@@ -10,7 +10,7 @@
 
         {{/*console.log({{index .StringMap "publishable_key"}});*/}}
         {{/*console.log({{.API}});*/}}
-        stripe = Stripe({{index .StringMap "publishable_key"}});
+        stripe = Stripe({{.StripePublishableKey}});
 
         function hidePayButton() {
             payButton.classList.add("d-none");
@@ -69,7 +69,9 @@
             }
 
             // console.log(requestOptions);
-            const apiPaymentIntentLink = {{.API}} + "api/payment-intent";
+            // console.log(amountToCharge);
+            const apiPaymentIntentLink = {{.API}} + "api/payment-intent"; // "{{.API}}/api/payment-intent}}"
+            console.log(apiPaymentIntentLink);
             fetch(apiPaymentIntentLink, requestOptions)
                 // fetch("http://localhost:4001/api/payment-intent", requestOptions)
                 .then(response => response.text())

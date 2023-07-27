@@ -20,6 +20,9 @@ type jsonResponse struct {
 }
 
 func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	app.infoLog.Println("Hit the handler-api")
 	var payload stripePayload
 
@@ -55,9 +58,9 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		//w.Header().Set("Content-Type", "application/json")
+		//w.Header().Set("Access-Control-Allow-Origin", "*")
+		//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		w.Write(out)
 	} else {
 		j := jsonResponse{
@@ -71,9 +74,9 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 			app.errorLog.Println(err)
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		//w.Header().Set("Content-Type", "application/json")
+		//w.Header().Set("Access-Control-Allow-Origin", "*")
+		//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		w.Write(out)
 	}
 

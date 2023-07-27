@@ -59,3 +59,7 @@ stop_back:
 	@-pkill -SIGTERM -f "gostripe_api -port=${API_PORT}"
 	@echo "Stopped back end"
 
+make r:
+	make stop
+	make start
+

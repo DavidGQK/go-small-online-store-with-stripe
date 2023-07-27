@@ -1,17 +1,15 @@
 package main
 
 import (
+	"fmt"
+	"myapp/internal/models"
 	"net/http"
+	"strconv"
 )
 
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
 	//app.infoLog.Println("Hit the handler")
-	stringMap := make(map[string]string)
-	//fmt.Println("KEY in VirtualTerminal", app.config.stripe.key)
-	stringMap["publishable_key"] = app.config.stripe.key
-	if err := app.renderTemplate(w, r, "terminal", &templateData{
-		StringMap: stringMap,
-	}, "stripe-js"); err != nil {
+	if err := app.renderTemplate(w, r, "terminal", &templateData{}, "stripe-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
@@ -36,7 +34,14 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 	data["email"] = email
 	data["pi"] = paymentIntent
 	data["pm"] = paymentMethod
-	data["pa"] = paymentAmount
+
+	pa, err := strconv.Atoi(paymentAmount)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+	data["pa"] = pa / 100
+
 	data["pc"] = paymentCurrency
 
 	if err := app.renderTemplate(w, r, "succeeded", &templateData{
@@ -47,7 +52,22 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 }
 
 func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
-	if err := app.renderTemplate(w, r, "buy-once", nil, "stripe-js"); err != nil {
+	widget := models.Widget{
+		ID:             1,
+		Name:           "Custom Widget",
+		Description:    "A very nice widget",
+		InventoryLevel: 10,
+		Price:          10,
+	}
+
+	data := make(map[string]interface{})
+	data["widget"] = widget
+
+	fmt.Println("data in ChargeOnce", data)
+
+	if err := app.renderTemplate(w, r, "buy-once", &templateData{
+		Data: data,
+	}, "stripe-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
