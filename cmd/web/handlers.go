@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"myapp/internal/models"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
 )
@@ -52,18 +51,17 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 }
 
 func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
-	widget := models.Widget{
-		ID:             1,
-		Name:           "Custom Widget",
-		Description:    "A very nice widget",
-		InventoryLevel: 10,
-		Price:          10,
+	id := chi.URLParam(r, "id")
+	widgetID, _ := strconv.Atoi(id)
+
+	widget, err := app.DB.GetWidget(widgetID)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
 	}
 
 	data := make(map[string]interface{})
 	data["widget"] = widget
-
-	fmt.Println("data in ChargeOnce", data)
 
 	if err := app.renderTemplate(w, r, "buy-once", &templateData{
 		Data: data,

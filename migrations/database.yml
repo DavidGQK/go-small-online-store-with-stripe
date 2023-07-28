@@ -1,0 +1,8 @@
+development:
+  dialect: mysql
+  database: mariadb_database
+  user: mariadb_user
+  password: 12345
+  host: localhost
+  port: 5432
+  pool: 5
