@@ -28,7 +28,7 @@ var functions = template.FuncMap{
 	"formatCurrency": formatCurrency,
 }
 
-func formatCurrency(n int) string {
+func formatCurrency(n float32) string {
 	//f := float32(n / 100)
 	f := float32(n)
 	return fmt.Sprintf("$%.2f", f)
