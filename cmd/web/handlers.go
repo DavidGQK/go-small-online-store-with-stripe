@@ -31,7 +31,7 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 	}
 
 	// read posted data
-	firtName := r.Form.Get("first_name")
+	firstName := r.Form.Get("first_name")
 	lastName := r.Form.Get("last_name")
 	email := r.Form.Get("cardholder_email")
 	paymentIntent := r.Form.Get("payment_intent")
@@ -62,7 +62,7 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 	expiryYear := pm.Card.ExpYear
 
 	// create a new customer
-	customerID, err := app.SaveCustomer(firtName, lastName, email)
+	customerID, err := app.SaveCustomer(firstName, lastName, email)
 	if err != nil {
 		app.errorLog.Println(err)
 		return
@@ -70,6 +70,7 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 
 	// create a new order
 	amount, _ := strconv.Atoi(paymentAmount)
+	amount = amount / 100
 	txn := models.Transaction{
 		Amount:              amount,
 		Currency:            paymentCurrency,
@@ -77,6 +78,8 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 		ExpiryMonth:         int(expiryMonth),
 		ExpiryYear:          int(expiryYear),
 		BankReturnCode:      pi.Charges.Data[0].ID,
+		PaymentIntent:       paymentIntent,
+		PaymentMethod:       paymentMethod,
 		TransactionStatusID: 2,
 	}
 
@@ -121,7 +124,7 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 	data["expiry_month"] = expiryMonth
 	data["expiry_year"] = expiryYear
 	data["bank_return_code"] = pi.Charges.Data[0].ID
-	data["first_name"] = firtName
+	data["first_name"] = firstName
 	data["last_name"] = lastName
 
 	if err := app.renderTemplate(w, r, "succeeded", &templateData{
