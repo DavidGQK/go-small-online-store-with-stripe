@@ -29,7 +29,7 @@ type TransactionData struct {
 	Email           string
 	PaymentIntentID string
 	PaymentMethodID string
-	PaymentAmount   float32
+	PaymentAmount   int
 	PaymentCurrency string
 	LastFour        string
 	ExpiryMonth     int
@@ -54,8 +54,8 @@ func (app *application) GetTransactionData(r *http.Request) (TransactionData, er
 	paymentAmount := r.Form.Get("payment_amount")
 	paymentCurrency := r.Form.Get("payment_currency")
 
-	amountT, _ := strconv.Atoi(paymentAmount)
-	amount := float32(amountT) / float32(100)
+	amount, _ := strconv.Atoi(paymentAmount)
+	amount = amount / 100
 
 	card := cards.Card{
 		Secret: app.config.stripe.secret,
@@ -260,6 +260,16 @@ func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(w, r, "buy-once", &templateData{
 		Data: data,
 	}, "stripe-js"); err != nil {
+		app.errorLog.Println(err)
+	}
+}
+
+func (app *application) BronzePlan(w http.ResponseWriter, r *http.Request) {
+	intMap := make(map[string]int)
+	intMap["plan_id"] = 1
+	if err := app.renderTemplate(w, r, "bronze-plan", &templateData{
+		IntMap: intMap,
+	}); err != nil {
 		app.errorLog.Println(err)
 	}
 }

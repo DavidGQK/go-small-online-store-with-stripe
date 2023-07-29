@@ -38,7 +38,7 @@ type Order struct {
 	CustomerID    int       `json:"customer_id"`
 	StatusID      int       `json:"status_id"`
 	QuantityID    int       `json:"quantity-id"`
-	Amount        float32   `json:"amount"`
+	Amount        int       `json:"amount"`
 	CreatedAt     time.Time `json:"-"`
 	UpdatedAt     time.Time `json:"-"`
 }
@@ -59,7 +59,7 @@ type TransactionStatus struct {
 
 type Transaction struct {
 	ID                  int       `json:"id"`
-	Amount              float32   `json:"amount"`
+	Amount              int       `json:"amount"`
 	Currency            string    `json:"currency"`
 	LastFour            string    `json:"last_four"`
 	ExpiryMonth         int       `json:"expiry_month"`
