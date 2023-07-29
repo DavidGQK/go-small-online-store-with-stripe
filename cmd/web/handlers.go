@@ -55,7 +55,7 @@ func (app *application) GetTransactionData(r *http.Request) (TransactionData, er
 	paymentCurrency := r.Form.Get("payment_currency")
 
 	amount, _ := strconv.Atoi(paymentAmount)
-	amount = amount / 100
+	//amount = amount / 100
 
 	card := cards.Card{
 		Secret: app.config.stripe.secret,
