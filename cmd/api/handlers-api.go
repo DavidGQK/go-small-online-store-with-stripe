@@ -209,7 +209,6 @@ func (app *application) CreateCustomerAndSubscribeToPlan(w http.ResponseWriter, 
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(out)
 }
 
@@ -244,4 +243,29 @@ func (app *application) SaveOrder(order models.Order) (int, error) {
 	}
 
 	return id, nil
+}
+
+func (app *application) CreateAuthToken(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	var userInput struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	err := app.readJSON(w, r, &userInput)
+	if err != nil {
+		app.badRequest(w, r, err)
+		return
+	}
+
+	var payload struct {
+		Error   bool   `json:"error"`
+		Message string `json:"message"`
+	}
+	payload.Error = false
+	payload.Message = "Success!"
+
+	_ = app.writeJSON(w, http.StatusOK, payload)
 }
