@@ -9,4 +9,7 @@ require (
 	github.com/stripe/stripe-go/v72 v72.122.0
 )
 
-require github.com/alexedwards/scs/v2 v2.5.1 // indirect
+require (
+	github.com/alexedwards/scs/v2 v2.5.1 // indirect
+	golang.org/x/crypto v0.11.0 // indirect
+)

@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"golang.org/x/crypto/bcrypt"
 	"io"
 	"net/http"
 )
@@ -66,6 +67,43 @@ func (app *application) badRequest(w http.ResponseWriter, r *http.Request, err e
 	}
 
 	//w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusBadRequest)
 	w.Write(out)
 	return nil
+}
+
+func (app *application) invalidCredentials(w http.ResponseWriter) error {
+	//w.Header().Set("Content-Type", "application/json")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	var payload struct {
+		Error   bool   `json:"error"`
+		Message string `json:"message"`
+	}
+
+	payload.Error = true
+	payload.Message = "invalid authentication credentials"
+
+	err := app.writeJSON(w, http.StatusUnauthorized, payload)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (app *application) passwordMatches(hash, password string) (bool, error) {
+	//w.Header().Set("Content-Type", "application/json")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	if err != nil {
+		switch {
+		case errors.Is(err, bcrypt.ErrMismatchedHashAndPassword):
+			return false, nil
+		default:
+			return false, err
+		}
+	}
+	return true, nil
 }

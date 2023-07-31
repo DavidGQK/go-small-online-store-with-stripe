@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"time"
 )
 
@@ -138,7 +139,7 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 						(amount, currency, last_four, bank_return_code, expiry_month, expiry_year,
 						 payment_intent, payment_method,
 						 transaction_status_id, created_at, updated_at)
-				value  
+				values  
 				    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); 
 `
 
@@ -175,7 +176,7 @@ func (m *DBModel) InsertOrder(order Order) (int, error) {
 				insert into orders
 						(widget_id, transaction_id, status_id, quantity, amount, customer_id,
 						 created_at, updated_at)
-				value  
+				values 
 				    (?, ?, ?, ?, ?, ?, ?, ?); 
 `
 
@@ -209,7 +210,7 @@ func (m *DBModel) InsertCustomer(c Customer) (int, error) {
 				insert into customers
 						(first_name, last_name, email,
 						 created_at, updated_at)
-				value  
+				values  
 				    (?, ?, ?, ?, ?); 
 `
 
@@ -230,4 +231,37 @@ func (m *DBModel) InsertCustomer(c Customer) (int, error) {
 	}
 
 	return int(id), nil
+}
+
+func (m *DBModel) GetUserByEmail(email string) (User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	email = strings.ToLower(email)
+	var u User
+
+	row := m.DB.QueryRowContext(ctx,
+		`select 
+						id, first_name, last_name, email, password,
+						created_at, updated_at
+				from 
+				    users 
+				where 
+				    email = ?;`,
+		email)
+
+	err := row.Scan(
+		&u.ID,
+		&u.FirstName,
+		&u.LastName,
+		&u.Email,
+		&u.Password,
+		&u.CreatedAt,
+		&u.UpdatedAt,
+	)
+	if err != nil {
+		return u, err
+	}
+
+	return u, nil
 }
