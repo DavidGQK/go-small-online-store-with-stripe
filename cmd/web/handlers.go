@@ -18,7 +18,7 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
 	//app.infoLog.Println("Hit the handler")
-	if err := app.renderTemplate(w, r, "terminal", &templateData{}, "stripe-js"); err != nil {
+	if err := app.renderTemplate(w, r, "terminal", &templateData{}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
