@@ -31,6 +31,8 @@ type config struct {
 		secret string
 		key    string
 	}
+	secretkey string
+	frontend  string
 }
 
 type application struct {
@@ -66,6 +68,9 @@ func main() {
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "mariadb_user:12345@tcp(localhost:5432)/mariadb_database?parseTime=true&tls=false", "DSN")
 	flag.StringVar(&cfg.api, "api", "http://localhost:4001/", "URL to api")
+
+	flag.StringVar(&cfg.secretkey, "secret", "324234235", "secret key")
+	flag.StringVar(&cfg.frontend, "frontend", "http://localhost:4000", "url to front end")
 
 	flag.Parse()
 

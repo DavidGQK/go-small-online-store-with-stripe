@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"myapp/internal/cards"
 	"myapp/internal/models"
+	"myapp/internal/urlsigner"
 	"net/http"
 	"strconv"
 	"time"
@@ -325,5 +327,22 @@ func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 func (app *application) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(w, r, "forgot-password", &templateData{}); err != nil {
 		app.errorLog.Println(err)
+	}
+}
+
+func (app *application) ShowResetPassword(w http.ResponseWriter, r *http.Request) {
+	theURl := r.RequestURI
+	testURL := fmt.Sprintf("%s%s", app.config.frontend, theURl)
+
+	signer := urlsigner.Signer{
+		Secret: []byte(app.config.secretkey),
+	}
+
+	valid := signer.VerifyToken(testURL)
+
+	if valid {
+		w.Write([]byte("valid"))
+	} else {
+		w.Write([]byte("invalid"))
 	}
 }
