@@ -190,7 +190,7 @@ func (app *application) CreateCustomerAndSubscribeToPlan(w http.ResponseWriter, 
 			TransactionID: txnID,
 			CustomerID:    customerID,
 			StatusID:      1,
-			QuantityID:    1,
+			Quantity:      1,
 			Amount:        amount,
 			CreatedAt:     time.Now(),
 			UpdatedAt:     time.Now(),
@@ -533,4 +533,37 @@ func (app *application) ResetPassword(w http.ResponseWriter, r *http.Request) {
 	resp.Message = "password changed"
 
 	app.writeJSON(w, http.StatusCreated, resp)
+}
+
+func (app *application) AllSales(w http.ResponseWriter, r *http.Request) {
+	allSales, err := app.DB.GetAllOrders()
+	if err != nil {
+		app.badRequest(w, r, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, allSales)
+}
+
+func (app *application) AllSubscriptions(w http.ResponseWriter, r *http.Request) {
+	allSales, err := app.DB.GetAllSubscriptions()
+	if err != nil {
+		app.badRequest(w, r, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, allSales)
+}
+
+func (app *application) GetSale(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	orderID, _ := strconv.Atoi(id)
+
+	order, err := app.DB.GetOrderByID(orderID)
+	if err != nil {
+		app.badRequest(w, r, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, order)
 }
