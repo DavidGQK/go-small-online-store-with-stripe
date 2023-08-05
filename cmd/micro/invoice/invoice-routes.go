@@ -17,7 +17,7 @@ func (app *application) routes() http.Handler {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
-	
+
 	mux.Get("/invoice/create-and-send", app.CreateAndSendInvoice)
 
 	return mux
