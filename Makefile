@@ -6,7 +6,7 @@ API_PORT=4001
 DSN=localhost
 
 ## build: builds all binaries
-build: clean build_front build_back
+build: clean build_front build_back build_invoice
 	@printf "All binaries built!\n"
 
 ## clean: cleans all binaries and runs go clean
@@ -28,8 +28,14 @@ build_back:
 	@go build -o dist/gostripe_api ./cmd/api
 	@echo "Back end built!"
 
+## build_invoice: builds the invoice microservice
+build_invoice:
+	@echo "Building invoice microservice..."
+	@go build -o dist/invoice ./cmd/micro/invoice
+	@echo "Invoice microservice built!"
+
 ## start: starts front and back end
-start: start_front start_back
+start: start_front start_back start_invoice
 	
 ## start_front: starts the front end
 start_front: build_front
@@ -43,8 +49,14 @@ start_back: build_back
 	@env STRIPE_KEY=${STRIPE_KEY} STRIPE_SECRET=${STRIPE_SECRET} ./dist/gostripe_api -port=${API_PORT}  & # -dsn=${DSN}
 	@echo "Back end running!"
 
+## start_invoice: starts the invoice microservice
+start_invoice: build_invoice
+	@echo "Starting the invoicing microservice..."
+	@./dist/invoice &
+	@echo "Invoicing microservice running!"
+
 ## stop: stops the front and back end
-stop: stop_front stop_back
+stop: stop_front stop_back stop_invoice
 	@echo "All applications stopped"
 
 ## stop_front: stops the front end
@@ -58,6 +70,12 @@ stop_back:
 	@echo "Stopping the back end..."
 	@-pkill -SIGTERM -f "gostripe_api -port=${API_PORT}"
 	@echo "Stopped back end"
+
+## stop_invoice: stops the front end
+stop_invoice:
+	@echo "Stopping the invoicing microservice..."
+	@-pkill -SIGTERM -f "invoice"
+	@echo "Stopped invoicing microservice"
 
 make r:
 	make stop
