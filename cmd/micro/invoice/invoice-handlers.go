@@ -105,5 +105,4 @@ func (app *application) createInvoicePDF(order Order) error {
 	}
 
 	return nil
-
 }
